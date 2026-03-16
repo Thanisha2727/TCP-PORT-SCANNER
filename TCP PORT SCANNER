@@ -1,0 +1,21 @@
+from scapy.all import *
+
+target = "192.168.1.1"
+ports = [21,22,23,25,53,80,443]
+
+for port in ports:
+
+    packet = IP(dst=target)/TCP(dport=port, flags="S")
+
+    resp = sr1(packet, timeout=1, verbose=0)
+
+    if resp and resp.haslayer(TCP):
+
+        if resp[TCP].flags == 0x12:
+            print(f"Port {port} OPEN")
+
+        elif resp[TCP].flags == 0x14:
+            print(f"Port {port} CLOSED")
+
+    else:
+        print(f"Port {port} FILTERED")
